@@ -3,6 +3,7 @@ package org.aplas.colorgamex;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -12,23 +13,26 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class MyActivity extends AppCompatActivity {
-    private TextView timer;
-    private TextView clrText;
-    private TextView scoreText;
-    private EditText passwd;
-    private Button submit;
-    private Button start;
-    private ViewGroup accessbox;
-    private ViewGroup colorbox;
-    private ViewGroup buttonbox1;
-    private ViewGroup buttonbox2;
-    private ViewGroup scorebox;
-    private ViewGroup progressbox;
-    private ProgressBar progress;
-    private Switch isMinus;
-
+    TextView timer;
+    TextView clrText;
+    TextView scoreText;
+    EditText passwd;
+    Button submit;
+    Button start;
+    ViewGroup accessbox;
+    ViewGroup colorbox;
+    ViewGroup buttonbox1;
+    ViewGroup buttonbox2;
+    ViewGroup scorebox;
+    ViewGroup progressbox;
+    ProgressBar progress;
+    Switch isMinus;
+    CountDownTimer countDown;
+    final String FORMAT = "%d:%d";
 
 
     @Override
@@ -51,6 +55,7 @@ public class MyActivity extends AppCompatActivity {
         progress = (ProgressBar) findViewById(R.id.progressScore);
         isMinus = (Switch) findViewById(R.id.isMinus);
 
+        initTimer();
     }
     public void openGame(View V){
         String keyword = getString(R.string.keyword);
@@ -76,5 +81,23 @@ public class MyActivity extends AppCompatActivity {
     }
     public void submitColor(View V){
 
+    }
+    private void initTimer(){
+        long millisInFuture = getResources().getInteger(R.integer.maxtimer) * 1000;
+        long countDownInterval = 1;
+        countDown = new CountDownTimer(millisInFuture, countDownInterval) {
+            public void onTick(long millisUntilFinished) {
+                timer.setText(""+String.format(FORMAT,
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds( TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished)),
+                        TimeUnit.MILLISECONDS.toMillis(millisUntilFinished) -
+                                TimeUnit.SECONDS.toMillis( TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished))
+                        )
+                );
+
+            }
+            public void onFinish() {
+            }
+        };
     }
 }
